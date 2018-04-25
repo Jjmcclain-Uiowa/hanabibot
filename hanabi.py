@@ -6,14 +6,21 @@ class Game:
     def __init__(self, deck):
         self.bombs = 0
         self.clues = 8
-
-        # top card of respective color
-        self.board = {'red': 0, 'blue': 0, 'yellow': 0, 'green': 0}
-        self.deck = deck
-        deck.shuffle()
+        self.board = {'red': 0, 'blue': 0, 'yellow': 0, 'green': 0} # top card value
         self.discard = []
         self.game_lost = False
         self.game_won = False
+        self.players = []
+        self.deck = deck
+        deck.shuffle()
+
+    def add_player(self, player):
+        self.players.append(player)
+
+    def start_game(self):
+        for player in players:
+            for i in range(5):
+                player.draw_card(self.deck)
 
 
 class Player:
@@ -26,13 +33,13 @@ class Player:
     def __str__(self):
         return self.name
 
-    def give_clue(self, clue):
-        clue.player.hand.append(clue)
-
     def draw_card(self, deck):
         card = deck.deck[0]
         del deck.deck[0]
         self.hand.append(card)
+
+    def give_clue(self, clue):
+        clue.player.hand.append(clue)
 
     def play_card(self, card_index, game):
         card = self.hand[card_index]
