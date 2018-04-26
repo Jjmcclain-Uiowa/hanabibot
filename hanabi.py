@@ -6,7 +6,7 @@ class Game:
     def __init__(self, deck):
         self.bombs = 0
         self.clues = 8
-        self.board = {'red': 0, 'blue': 0, 'yellow': 0, 'green': 0} # top card value
+        self.board = {'red': 0, 'blue': 0, 'yellow': 0, 'green': 0} # top card number
         self.discard = []
         self.game_lost = False
         self.game_won = False
@@ -38,8 +38,10 @@ class Player:
         del deck.deck[0]
         self.hand.append(card)
 
-    def give_clue(self, clue):
+    def give_clue(self, clue, game):
         clue.player.hand.append(clue)
+        game.clues -= 1
+
 
     def play_card(self, card_index, game):
         card = self.hand[card_index]
@@ -47,9 +49,27 @@ class Player:
 
         if card.num == game.board[card.color] + 1:
             game.board[card.color] = card.num
+            if all(value == 5 for value in game.board.values()):
+                game.game_won = True
         else:
             game.bombs += 1
             game.discard.append(card)
+            count = 0
+
+            if card in discard:
+                count += 1
+
+            if card.num == 5:
+                game.game_lost = True
+
+            if card.num == 4 or card.num == 3 or card.num == 2:
+                if count == 2:
+                    game.game_lost = True
+
+            if card.num == 1 and count == 3:
+                game.game_lost = True
+
+
 
         self.draw_card(game.deck)
 
@@ -96,9 +116,9 @@ class Card:
 
 class Clue:
 
-    def __init__(self, player, count, num=0, color=""):
+    def __init__(self, player, indexes, num=0, color=""):
         self.player = player
-        self.count = count
         self.num = num
         self.color = color
+        self.indexes = indexes
 
